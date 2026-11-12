@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>RL MASTER / RL MARKET — ЧПУ цех</title>
+  <meta name="theme-color" content="#ffffff" />
+  <!-- Манифест приложения -->
+  <link rel="manifest" href="./manifest.json" />
+  <!-- Исправленные корневые пути к стилям -->
+  <link rel="stylesheet" href="./base.css" />
+  <link rel="stylesheet" href="./modules.css" />
+  <!-- Supabase JS v2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Мобильная консоль отладки Eruda -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    // Инициализация консоли разработчика на мобильном устройстве
+    if (window.eruda) {
+      eruda.init();
+    }
+  </script>
+</head>
+<body>
+  <!-- Шапка приложения -->
+  <header class="app-header">
+    <div class="header-left">
+      <div id="rl-logo-trigger" class="logo-badge" title="Удерживайте 5 секунд для входа в RL Master">
+        RL
+        <svg class="hold-ring" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="20"></circle>
+        </svg>
+      </div>
+      <div class="brand-info">
+        <div class="brand-title-row">
+          <span id="app-brand-name" class="brand-title">RL MARKET</span>
+          <span id="mode-badge" class="mode-badge mode-view">ПРОСМОТР</span>
+        </div>
+        <div class="brand-subtitle">RL technology • ЧПУ цех</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="btn-logout-master" class="icon-btn hidden" title="Выйти из режима мастера">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Основной динамический контейнер вкладок -->
+  <main id="app-content" class="app-main"></main>
+
+  <!-- Нижняя навигационная панель -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="catalog">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+      </svg>
+      <span>Каталог</span>
+    </button>
+
+    <!-- Вкладка Раскрой видна ТОЛЬКО в режиме RL Master -->
+    <button id="nav-tab-nesting" class="nav-item hidden" data-tab="nesting">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>Раскрой</span>
+    </button>
+
+    <button class="nav-item" data-tab="favorites">
+      <div class="nav-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span id="badge-fav" class="nav-badge hidden">0</span>
+      </div>
+      <span>Избранное</span>
+    </button>
+
+    <button class="nav-item" data-tab="cart">
+      <div class="nav-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span id="badge-cart" class="nav-badge hidden">0</span>
+      </div>
+      <span>Корзина</span>
+    </button>
+  </nav>
+
+  <!-- Контейнер для модальных окон -->
+  <div id="modal-root"></div>
+
+  <!-- Всплывающие уведомления -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Исправленный корневой путь к главному скрипту -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
