@@ -1,17 +1,8 @@
-export const CONFIG = {
+// Единая конфигурация RL Market & RL Master
+window.RL_CONFIG = {
   SUPABASE_URL: 'https://fgbjglpdoirsdnkrgsqk.supabase.co',
   SUPABASE_KEY: 'sb_publishable_VmMN054vVhhz-JCeEW4LJg_Tcp6w9zc',
-  MASTER_EMAIL: 'rinat@mail.ru',
-  WHATSAPP_PHONE: '79280003899',
-  COMPANY_NAME: 'RL technology • ЧПУ цех',
-  DEFAULT_SHEET: {
-    width: 1525,
-    height: 1525,
-    kerf: 6,
-    margin: 15
-  }
+  DEFAULT_WHATSAPP: '+7 (999) 000-00-00',
+  DEFAULT_CATEGORIES: ['Потолочные Панели', 'Подставки для Корана', 'Декор / Резьба', 'Панели (м²)'],
+  DEFAULT_CNC: { sheetW: 1525, sheetH: 1525, kerf: 6, margin: 15 }
 };
-
-export const supabase = window.supabase
-  ? window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
-  : null;

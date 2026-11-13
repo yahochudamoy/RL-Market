@@ -1,109 +1,214 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RL MASTER / RL MARKET — ЧПУ цех</title>
-  <meta name="theme-color" content="#ffffff" />
-  <!-- Манифест приложения -->
-  <link rel="manifest" href="./manifest.json" />
-  <!-- Исправленные корневые пути к стилям -->
-  <link rel="stylesheet" href="./base.css" />
-  <link rel="stylesheet" href="./modules.css" />
-  <!-- Supabase JS v2 CDN -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RL MARKET — Витрина ЧПУ Мастерской</title>
+
+  <meta name="theme-color" content="#ea580c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" onerror="var s=document.createElement('script');s.src='https://unpkg.com/lucide@latest';document.head.appendChild(s);"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Мобильная консоль отладки Eruda -->
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-  <script>
-    // Инициализация консоли разработчика на мобильном устройстве
-    if (window.eruda) {
-      eruda.init();
-    }
-  </script>
 </head>
-<body>
-  <!-- Шапка приложения -->
-  <header class="app-header">
-    <div class="header-left">
-      <div id="rl-logo-trigger" class="logo-badge" title="Удерживайте 5 секунд для входа в RL Master">
-        RL
-        <svg class="hold-ring" viewBox="0 0 44 44">
-          <circle cx="22" cy="22" r="20"></circle>
-        </svg>
-      </div>
-      <div class="brand-info">
-        <div class="brand-title-row">
-          <span id="app-brand-name" class="brand-title">RL MARKET</span>
-          <span id="mode-badge" class="mode-badge mode-view">ПРОСМОТР</span>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen pb-24 selection:bg-orange-500 selection:text-white">
+
+  <!-- ШАПКА ВИТРИНЫ -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <a href="./master.html" title="Вход для мастера" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-orange-500/20">
+          RL
+        </a>
+        <div>
+          <h1 class="text-base font-black tracking-tight text-slate-900 leading-none">RL MARKET</h1>
+          <p class="text-[10px] text-orange-600 font-bold uppercase tracking-wider mt-0.5">ЧПУ Мастерская изделий</p>
         </div>
-        <div class="brand-subtitle">RL technology • ЧПУ цех</div>
+      </div>
+
+      <button onclick="switchClientTab('cart')" class="relative p-2 text-slate-700 hover:text-orange-600 bg-slate-100 hover:bg-orange-50 rounded-xl transition">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span id="header-cart-badge" class="hidden absolute -top-1 -right-1 bg-orange-600 text-white font-extrabold text-[9px] w-4 h-4 rounded-full flex items-center justify-center shadow">0</span>
+      </button>
+    </div>
+
+    <div class="max-w-md mx-auto px-4 pb-2.5">
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+          <i data-lucide="search" class="w-4 h-4"></i>
+        </span>
+        <input type="text" id="client-search" oninput="handleSearch()" placeholder="Поиск изделий, резных панелей, сувениров..."
+          class="w-full pl-9 pr-8 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:bg-white transition">
+        <button id="search-clear-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
       </div>
     </div>
-    <div class="header-right">
-      <button id="btn-logout-master" class="icon-btn hidden" title="Выйти из режима мастера">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-      </button>
+
+    <div class="border-t border-slate-100 bg-white/80">
+      <div class="max-w-md mx-auto px-4 py-2 overflow-x-auto hide-scrollbar">
+        <div id="category-chips" class="flex gap-1.5 whitespace-nowrap"></div>
+      </div>
     </div>
   </header>
 
-  <!-- Основной динамический контейнер вкладок -->
-  <main id="app-content" class="app-main"></main>
-
-  <!-- Нижняя навигационная панель -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" data-tab="catalog">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-      </svg>
-      <span>Каталог</span>
-    </button>
-
-    <!-- Вкладка Раскрой видна ТОЛЬКО в режиме RL Master -->
-    <button id="nav-tab-nesting" class="nav-item hidden" data-tab="nesting">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-      </svg>
-      <span>Раскрой</span>
-    </button>
-
-    <button class="nav-item" data-tab="favorites">
-      <div class="nav-icon-wrap">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
-        <span id="badge-fav" class="nav-badge hidden">0</span>
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main class="max-w-md mx-auto px-3.5 pt-3.5">
+    <!-- КАТАЛОГ ТОВАРОВ -->
+    <section id="tab-catalog" class="space-y-4">
+      <div id="products-loading" class="text-center py-16 space-y-3">
+        <div class="w-7 h-7 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p class="text-xs text-slate-500 font-medium">Загрузка каталога изделий...</p>
       </div>
-      <span>Избранное</span>
-    </button>
 
-    <button class="nav-item" data-tab="cart">
-      <div class="nav-icon-wrap">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <span id="badge-cart" class="nav-badge hidden">0</span>
+      <div id="products-grid" class="grid grid-cols-2 gap-2.5"></div>
+
+      <div id="empty-state" class="hidden text-center py-16 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+        <i data-lucide="package-open" class="w-10 h-10 mx-auto text-slate-400 mb-2 stroke-[1.5]"></i>
+        <h3 class="text-sm font-bold text-slate-800">Изделия не найдены</h3>
+        <p class="text-xs text-slate-500 mt-1">Попробуйте изменить категорию или поисковый запрос</p>
       </div>
-      <span>Корзина</span>
-    </button>
+    </section>
+
+    <!-- ИЗБРАННОЕ -->
+    <section id="tab-favorites" class="hidden space-y-3.5">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider">Избранные изделия</h2>
+        <span id="fav-count-text" class="text-xs text-slate-500 font-medium">0 товаров</span>
+      </div>
+      <div id="favorites-grid" class="grid grid-cols-2 gap-2.5"></div>
+      <div id="favorites-empty" class="text-center py-16 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+        <i data-lucide="heart" class="w-10 h-10 mx-auto text-rose-300 mb-2 stroke-[1.5]"></i>
+        <h3 class="text-sm font-bold text-slate-800">В избранном пока пусто</h3>
+        <p class="text-xs text-slate-500 mt-1">Нажимайте сердечко на карточках, чтобы сохранить понравившиеся работы</p>
+      </div>
+    </section>
+
+    <!-- КОРЗИНА И ОФОРМЛЕНИЕ ЗАКАЗА -->
+    <section id="tab-cart" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-black text-slate-900 uppercase tracking-wider">Ваш заказ</h2>
+        <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-500 font-semibold transition">Очистить</button>
+      </div>
+
+      <div id="cart-items-container" class="space-y-2.5"></div>
+
+      <div id="cart-checkout-block" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3.5">
+        <div class="flex justify-between items-baseline border-b border-slate-100 pb-2.5">
+          <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">Примерная сумма:</span>
+          <span id="cart-total-price" class="text-xl font-black text-orange-600">0 ₽</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Ваше имя</label>
+            <input type="text" id="client-name" placeholder="Как к вам обращаться"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-600 mb-1">Город / Комментарий к заказу (необязательно)</label>
+            <textarea id="client-comment" rows="2" placeholder="Размеры помещения, пожелания по цвету или доставке..."
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-orange-500"></textarea>
+          </div>
+        </div>
+
+        <button onclick="submitOrderViaWhatsApp()"
+          class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-extrabold py-3.5 rounded-xl text-xs tracking-wide shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 active:scale-98 transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Оформить заказ в WhatsApp мастера</span>
+        </button>
+        <p class="text-[10px] text-center text-slate-400">
+          Мастер сразу получит готовый расчет со списком выбранных изделий и материалов.
+        </p>
+      </div>
+
+      <div id="cart-empty" class="hidden text-center py-16 bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+        <i data-lucide="shopping-cart" class="w-10 h-10 mx-auto text-slate-300 mb-2 stroke-[1.5]"></i>
+        <h3 class="text-sm font-bold text-slate-800">Корзина пуста</h3>
+        <p class="text-xs text-slate-500 mt-1">Добавьте изделия из каталога для отправки сметы мастеру</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-6 shadow-lg">
+    <div class="flex justify-around max-w-md mx-auto items-center">
+      <button onclick="switchClientTab('catalog')" id="nav-btn-catalog" class="flex flex-col items-center gap-1 text-orange-600 font-bold transition">
+        <i data-lucide="grid" class="w-5 h-5"></i>
+        <span class="text-[10px]">Каталог</span>
+      </button>
+
+      <button onclick="switchClientTab('favorites')" id="nav-btn-favorites" class="relative flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition">
+        <i data-lucide="heart" class="w-5 h-5"></i>
+        <span class="text-[10px]">Избранное</span>
+        <span id="fav-badge" class="hidden absolute top-0 right-3.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+      </button>
+
+      <button onclick="switchClientTab('cart')" id="nav-btn-cart" class="relative flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition">
+        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+        <span class="text-[10px]">Корзина</span>
+        <span id="nav-cart-badge" class="hidden absolute -top-1 right-2 bg-orange-600 text-white font-extrabold text-[9px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </button>
+    </div>
   </nav>
 
-  <!-- Контейнер для модальных окон -->
-  <div id="modal-root"></div>
+  <!-- МОДАЛКА: ДЕТАЛЬНЫЙ ПРОСМОТР ИЗДЕЛИЯ -->
+  <div id="product-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl max-h-[92vh] overflow-y-auto p-5 shadow-2xl flex flex-col space-y-4">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+        <span id="modal-cat-tag" class="text-[11px] font-extrabold uppercase tracking-wider text-orange-600">Категория</span>
+        <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-700 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
 
-  <!-- Всплывающие уведомления -->
-  <div id="toast-container" class="toast-container"></div>
+      <div class="w-full h-64 bg-slate-100 border border-slate-200 rounded-2xl overflow-hidden flex items-center justify-center">
+        <img id="modal-img" src="" class="w-full h-full contain-photo" alt="">
+      </div>
 
-  <!-- Исправленный корневой путь к главному скрипту -->
-  <script type="module" src="./app.js"></script>
+      <div>
+        <h3 id="modal-title" class="text-lg font-black text-slate-900 leading-tight">Название изделия</h3>
+        <div class="flex items-center gap-2 mt-1.5">
+          <span id="modal-price" class="text-2xl font-black text-orange-600">0 ₽</span>
+          <span id="modal-unit" class="text-xs text-slate-500 font-medium">/ шт.</span>
+        </div>
+      </div>
+
+      <div id="modal-material-box" class="p-3 bg-orange-50/70 border border-orange-200/80 rounded-xl flex items-center gap-2.5 text-xs text-slate-700">
+        <div class="p-2 bg-orange-600 text-white rounded-lg shrink-0">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <span class="block text-[10px] uppercase font-bold text-orange-800">Материал:</span>
+          <span id="modal-material" class="font-extrabold text-slate-900">Берёзовая фанера / МДФ</span>
+        </div>
+      </div>
+
+      <div>
+        <span class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Спецификация и описание:</span>
+        <p id="modal-desc" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
+          Описание отсутствует.
+        </p>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 flex gap-2">
+        <button id="modal-btn-fav" onclick="toggleModalFav()" class="p-3 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 rounded-xl transition">
+          <i id="modal-fav-icon" data-lucide="heart" class="w-5 h-5"></i>
+        </button>
+        <button id="modal-btn-cart" onclick="addModalItemToCart()" class="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 active:scale-98 transition">
+          <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+          <span>Добавить в корзину</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./js/supabase-client.js"></script>
+  <script src="./js/market-app.js"></script>
 </body>
 </html>

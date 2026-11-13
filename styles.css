@@ -1,0 +1,217 @@
+/* Единые стили RL Market & RL Master (с автономным CSS-каркасом на случай блокировки CDN) */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+}
+
+img, svg, canvas {
+  max-width: 100%;
+  display: block;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.master-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.contain-photo {
+  object-fit: contain !important;
+  background-color: #f8fafc;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Анимация 5 быстрых тапов */
+.hold-target-active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 3px #f97316, 0 10px 25px -5px rgba(249, 115, 22, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Рамка глобального режима правки */
+body.global-edit-mode {
+  box-shadow: inset 0 0 0 4px #f97316;
+}
+
+/* ==========================================================================
+   РЕЗЕРВНЫЙ АВТОНОМНЫЙ КАРКАС (Fallback при недоступности cdn.tailwindcss.com)
+   ========================================================================== */
+.max-w-md { max-width: 28rem; margin-left: auto; margin-right: auto; }
+.max-w-sm { max-width: 24rem; margin-left: auto; margin-right: auto; }
+.max-w-xs { max-width: 20rem; margin-left: auto; margin-right: auto; }
+.w-full { width: 100%; }
+.min-h-screen { min-height: 100vh; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-1 { flex: 1 1 0%; }
+.items-center { align-items: center; }
+.items-baseline { align-items: baseline; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-around { justify-content: space-around; }
+.shrink-0 { flex-shrink: 0; }
+.gap-1 { gap: 0.25rem; }
+.gap-1\.5 { gap: 0.375rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-2\.5 { gap: 0.625rem; }
+.gap-3 { gap: 0.75rem; }
+
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.col-span-2 { grid-column: span 2 / span 2; }
+
+/* Защита размеров логотипа RL и иконок при сбое Tailwind */
+.w-9.h-9 { width: 2.25rem !important; height: 2.25rem !important; border-radius: 0.75rem; }
+.w-10.h-10 { width: 2.5rem !important; height: 2.5rem !important; border-radius: 0.75rem; }
+.w-16.h-16 { width: 4rem !important; height: 4rem !important; border-radius: 1rem; }
+.w-8.h-8 { width: 2rem !important; height: 2rem !important; }
+.w-7.h-7 { width: 1.75rem !important; height: 1.75rem !important; }
+.w-5.h-5 { width: 1.25rem !important; height: 1.25rem !important; }
+.w-4.h-4 { width: 1rem !important; height: 1rem !important; }
+.w-3\.5.h-3\.5 { width: 0.875rem !important; height: 0.875rem !important; }
+.w-3.h-3 { width: 0.75rem !important; height: 0.75rem !important; }
+.h-36 { height: 9rem !important; }
+.h-64 { height: 16rem !important; }
+.aspect-square { aspect-ratio: 1 / 1; }
+
+/* Базовые отступы и скругления */
+.p-2 { padding: 0.5rem; }
+.p-2\.5 { padding: 0.625rem; }
+.p-3 { padding: 0.75rem; }
+.p-3\.5 { padding: 0.875rem; }
+.p-4 { padding: 1rem; }
+.p-5 { padding: 1.25rem; }
+.p-6 { padding: 1.5rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-2\.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-3\.5 { padding-left: 0.875rem; padding-right: 0.875rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-2\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.pb-24 { padding-bottom: 6rem; }
+.pt-3 { padding-top: 0.75rem; }
+.pt-4 { padding-top: 1rem; }
+.mt-0\.5 { margin-top: 0.125rem; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-2xl { border-radius: 1rem; }
+.rounded-3xl { border-radius: 1.5rem; }
+.rounded-full { border-radius: 9999px; }
+
+/* Цвета бренда и поверхностей */
+.bg-white { background-color: #ffffff; }
+.bg-slate-50 { background-color: #f8fafc; }
+.bg-slate-100 { background-color: #f1f5f9; }
+.bg-slate-900 { background-color: #0f172a; }
+.bg-orange-50 { background-color: #fff7ed; }
+.bg-orange-100 { background-color: #ffedd5; }
+.bg-orange-500 { background-color: #f97316; }
+.bg-orange-600 { background-color: #ea580c; }
+.bg-emerald-600 { background-color: #059669; }
+.bg-gradient-to-tr, .bg-gradient-to-br, .bg-gradient-to-r {
+  background-image: linear-gradient(135deg, #f59e0b, #ea580c);
+}
+
+.text-white { color: #ffffff; }
+.text-slate-900 { color: #0f172a; }
+.text-slate-700 { color: #334155; }
+.text-slate-600 { color: #475569; }
+.text-slate-500 { color: #64748b; }
+.text-slate-400 { color: #94a3b8; }
+.text-orange-600 { color: #ea580c; }
+.text-orange-900 { color: #7c2d12; }
+
+.border { border: 1px solid #e2e8f0; }
+.border-b { border-bottom: 1px solid #e2e8f0; }
+.border-t { border-top: 1px solid #e2e8f0; }
+.border-slate-200 { border-color: #e2e8f0; }
+.border-orange-200 { border-color: #fed7aa; }
+.border-orange-400 { border-color: #fb923c; }
+
+.font-black { font-weight: 900; }
+.font-extrabold { font-weight: 800; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.uppercase { text-transform: uppercase; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.overflow-hidden { overflow: hidden; }
+.overflow-x-auto { overflow-x: auto; }
+.whitespace-nowrap { white-space: nowrap; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.sticky { position: sticky; }
+.fixed { position: fixed; }
+.top-0 { top: 0; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+.right-0 { right: 0; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+.shadow-sm { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+
+header.sticky {
+  background-color: rgba(255, 255, 255, 0.96);
+}
+footer.fixed, nav.fixed {
+  background-color: rgba(255, 255, 255, 0.96);
+}
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="tel"], select, textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  background-color: #ffffff;
+  color: #0f172a;
+}
+button {
+  cursor: pointer;
+  border-radius: 0.75rem;
+}
